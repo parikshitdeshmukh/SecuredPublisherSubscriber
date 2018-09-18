@@ -1,30 +1,52 @@
+<<<<<<< HEAD
 
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+=======
+import java.io.*;
+>>>>>>> origin/master
 import java.net.Socket;
 
 public class Client {
 
-    public static void main(String...args) throws IOException {
+    public static void main(String...args){
 
-        Socket socket = new Socket("192.168.1.56", 4444);
+        Socket socket = null;
 
-        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-        System.out.println("Sending to Server---");
-        out.writeUTF("Hello, goodbye!");
-        out.flush();
+            try {
+                socket = new Socket("192.168.1.56", 4444);
 
-        DataInputStream in = new DataInputStream(socket.getInputStream());
-        String read;
-        System.out.println("Received from Server---- ");
-        if((read=in.readUTF())!=null){
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                System.out.println("Sending to Server---");
 
-            System.out.println(read);
-        }
+                while (true) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        socket.close();
+                    // Reading data using readLine
+                    String name = reader.readLine();
+
+                    out.writeUTF(name.trim());
+                    out.flush();
+
+                    DataInputStream in = new DataInputStream(socket.getInputStream());
+                    String read;
+                    System.out.println("Received from Server---- ");
+                    if ((read = in.readUTF()) != null) {
+
+                        System.out.println(read);
+                    }
+                }
+
+//                socket.close();
+
+            } catch (Exception e) {
+                System.out.println("Connection issue");
+                e.printStackTrace();
+            }
+
+
 
     }
 

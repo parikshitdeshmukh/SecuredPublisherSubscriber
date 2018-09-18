@@ -9,6 +9,7 @@ import java.net.Socket;
 public class Server {
     static StringBuffer buffer = new StringBuffer();
 
+
     public static void main(String...args){
 
         Socket appSocket = null;
