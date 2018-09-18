@@ -1,3 +1,5 @@
+
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -5,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+    static StringBuffer buffer = new StringBuffer();
 
 
     public static void main(String...args){
@@ -27,6 +30,10 @@ public class Server {
                 appSocket = serverSocket.accept();
 
                 System.out.println("Connected !!");
+                System.out.println("inet address: " + appSocket.getInetAddress());
+                System.out.println("local address: " + appSocket.getLocalAddress());
+                System.out.println("local port: " + appSocket.getLocalPort());
+                System.out.println("port: " + appSocket.getPort());
 
                 ServerThread st= new ServerThread(appSocket);
                 st.start();
@@ -52,17 +59,24 @@ public class Server {
         public void run(){
 
             try {
-                in = new DataInputStream(appSocket.getInputStream());
-                String serverReceived = in.readUTF();
-                System.out.println("Server received form Client-- "+ serverReceived);
+                while(true){
+//                    buffer = new StringBuffer();
+                    in = new DataInputStream(appSocket.getInputStream());
+                    String serverReceived = in.readUTF();
+                    System.out.println("Server received form Client-- "+ serverReceived);
 
-                System.out.println("Server Sending to Client-- "+ serverReceived);
 
-                DataOutputStream out = new DataOutputStream(appSocket.getOutputStream());
-                out.writeUTF("Hello from Server");
-                out.flush();
-                appSocket.close();
+                    System.out.println("Server Sending to Client-- "+ buffer);
 
+                    DataOutputStream out = new DataOutputStream(appSocket.getOutputStream());
+                    out.writeUTF(buffer.toString());
+                    out.flush();
+                    buffer.append(serverReceived);
+//                    buffer.setLength(0);
+
+                    System.out.println("port: " + appSocket.getPort());
+//                appSocket.close();
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
