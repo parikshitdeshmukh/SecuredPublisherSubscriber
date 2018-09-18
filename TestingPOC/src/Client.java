@@ -11,12 +11,13 @@ public class Client {
         Socket socket = new Socket("192.168.1.56", 4444);
 
         DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-
+        System.out.println("Sending to Server---");
         out.writeUTF("Hello, goodbye!");
         out.flush();
 
         DataInputStream in = new DataInputStream(socket.getInputStream());
         String read;
+        System.out.println("Received from Server---- ");
         if((read=in.readUTF())!=null){
 
             System.out.println(read);

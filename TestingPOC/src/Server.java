@@ -1,3 +1,5 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -39,8 +41,31 @@ public class Server {
 
     private static class ServerThread extends Thread {
 
-        public ServerThread(Socket appSocket){
+        Socket appSocket = null;
+        DataInputStream in ;
 
+        public ServerThread(Socket appSocket){
+            this.appSocket = appSocket;
+        }
+
+        public void run(){
+
+            try {
+                in = new DataInputStream(appSocket.getInputStream());
+                String serverReceived = in.readUTF();
+                System.out.println("Server received form Client-- "+ serverReceived);
+
+                System.out.println("Server Sending to Client-- "+ serverReceived);
+
+                DataOutputStream out = new DataOutputStream(appSocket.getOutputStream());
+                out.writeUTF("Hello from Server");
+                out.flush();
+                appSocket.close();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
