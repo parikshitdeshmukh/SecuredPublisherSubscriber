@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class Client2 {
@@ -11,7 +12,9 @@ public class Client2 {
         Socket socket = null;
 
         try {
-            socket = new Socket("192.168.1.56", 4444);
+//            socket = new Socket("192.168.1.56", 4444);
+            socket = new Socket(InetAddress.getLocalHost(), 4444);
+
 
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             System.out.println("Sending to Server---");

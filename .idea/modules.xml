@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/SecuredPublisherSubscriber.iml" filepath="$PROJECT_DIR$/.idea/SecuredPublisherSubscriber.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestingPOC/TestingPOC.iml" filepath="$PROJECT_DIR$/TestingPOC/TestingPOC.iml" />
     </modules>
   </component>

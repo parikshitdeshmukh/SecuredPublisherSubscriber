@@ -1,47 +1,72 @@
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client3 {
 
-    public static void main(String...args){
+    public static void main(String[] args) throws IOException
+    {
+        int i=1;
+        String type="";
+        try
+        {
+            Scanner scn = new Scanner(System.in);
 
-        Socket socket = null;
+            // getting localhost ip
+            InetAddress ip = InetAddress.getByName("localhost");
 
-        try {
-            socket = new Socket("192.168.1.56", 4444);
+            // establish the connection with server port 5056
+            Socket s = new Socket(ip, 5056);
 
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            System.out.println("Sending to Server---");
+            // obtaining input and out streams
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-            while (true) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            // the following loop performs the exchange of
+            // information between client and client handler
+            while (true)
+            {
+//                System.out.println(dis.readUTF());
+                if(i==1 || type.equals("Pub")) {
+                    System.out.println("Inside Pub of Client");
 
-                // Reading data using readLine
-                String name = reader.readLine();
+                    String tosend = scn.nextLine();
+                    if(i==1)
+                        type = tosend;
+                    dos.writeUTF(tosend);
+                    dos.flush();
 
-                out.writeUTF(name.trim());
-                out.flush();
+                    // If client sends exit,close this connection
+                    // and then break from the while loop
+                    if (tosend.equals("Exit")) {
+                        System.out.println("Closing this connection : " + s);
+                        s.close();
+                        System.out.println("Connection closed");
+                        break;
+                    }
 
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                String read;
-                System.out.println("Received from Server---- ");
-                if ((read = in.readUTF()) != null) {
+                    // printing date or time as requested by client
+//                    String received = dis.readUTF();
+//                    System.out.println(received);
+                    i++;
+                }else if(type.equals("Sub")){
+                    System.out.println("Inside Sub of Client");
 
-                    System.out.println(read);
+                    String received = dis.readUTF();
+                    if(dis.readUTF()==null)
+                        dis.close();
+                    System.out.println(received);
+
                 }
             }
 
-//                socket.close();
-
-        } catch (Exception e) {
-            System.out.println("Connection issue");
+            // closing resources
+            scn.close();
+            dis.close();
+            dos.close();
+        }catch(Exception e){
             e.printStackTrace();
         }
-
-
     }
-
 }
