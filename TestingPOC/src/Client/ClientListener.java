@@ -3,8 +3,10 @@ package Client;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientListener extends Thread{
+
 
 	Socket socket;
 	
@@ -18,7 +20,8 @@ public class ClientListener extends Thread{
 		try {
 			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 			while(true) {
-				System.out.println("Receieved: " + dataInputStream.readUTF());
+
+				System.out.println("Received: " + dataInputStream.readUTF());
 			}
 			
 		} catch (IOException e) {

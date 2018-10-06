@@ -17,11 +17,11 @@ public class Client {
 			new ClientListener(socket).start();
 			DataOutputStream dataOutputStream = new  DataOutputStream(socket.getOutputStream());
 			while(true) {
-				System.out.println("Enter Data Now");
+				System.out.println("Enter Topic to be published");
 				String data = scanner.nextLine();
 				dataOutputStream.writeUTF(data);
 				dataOutputStream.flush();
-				System.out.println("sent: " + data);
+//				System.out.println("sent: " + data);
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block

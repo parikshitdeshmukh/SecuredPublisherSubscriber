@@ -36,12 +36,12 @@ public class Server {
 		}.start();
 	}
 
-	public static synchronized void publishData(Socket owner, String data) {
+	public static synchronized void publishData(Socket owner, ArrayList<String> topicList) {
 		try {
 			for (Socket socket : socketList) {
 				if(owner != socket) {
 					DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-					dataOutputStream.writeUTF(data);
+					dataOutputStream.writeUTF(String.valueOf(topicList));
 					dataOutputStream.flush();
 				}
 			}
