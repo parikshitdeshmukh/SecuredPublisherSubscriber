@@ -23,8 +23,8 @@ class MQTTPacket
 
 //      connect ack packet
         control = "0x20";
-        length = "0x01" + "0x00";
-        variable_header = "0x00";
+        length = "0x05" + "0x00";
+        variable_header = "0x00" + "0x00";
         payload = "~~~~" + " ";
         String connect_ack_packet;
         connect_ack_packet = control + length + variable_header + payload;
