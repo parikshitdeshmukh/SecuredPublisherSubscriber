@@ -63,6 +63,14 @@ class MQTTPacket
         subscribe_packet = control + length + variable_header + payload;
         System.out.println("\n Subscribe Packet: \n" + subscribe_packet);
 
+//      subscribe ACK packet
+        control = "0x90";
+        length = "0x07" + "0x00";
+        variable_header = "0x00" + "0x00"; // packet identifier of subscribe packet
+        payload = "~~~~" + "0x00" + "0x02"; // return code - 02 for QoS 2 (at least once)
+        String subscribe_ACK_packet;
+        subscribe_ACK_packet = control + length + variable_header + payload;
+
 
 //      trying out the packet_parser function
         packet_parser(connect_packet);
@@ -70,6 +78,7 @@ class MQTTPacket
         packet_parser(publish_message_packet);
         packet_parser(publish_ACK_packet);
         packet_parser(subscribe_packet);
+        packet_parser(subscribe_ACK_packet);
     }
 
     static void packet_parser(String packet)
