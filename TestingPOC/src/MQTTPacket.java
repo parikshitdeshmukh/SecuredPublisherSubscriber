@@ -32,7 +32,7 @@ class MQTTPacket
 
 //      publish message packet
         control = "0x30";  // it'll be '0x32' for QoS enabled packet (at least once mode)
-        length = "0x0f" + "0x00"; // 15 bytes
+        length = "0x02" + "0x01"; // 18 bytes
 
 //      first is topic name length, then is the topic name, followed by packet identifier in case of QoS
         variable_header = "0x05" + "topic" + "0x00" + "0x00"; // for now packet identifier is 0000
@@ -45,12 +45,23 @@ class MQTTPacket
 
 //      publish ACK packet (in case of QoS level 1 (at least once)
         control = "0x40";
-        length = "0x02" + "0x00";
+        length = "0x03" + "0x00";
         variable_header = "0x00" + "0x00"; // packet identifier from publish message packet.
         payload = "~~~~" + " ";
         String publish_ACK_packet;
         publish_ACK_packet = control + length + variable_header + payload;
         System.out.println("\n Publlsh ACK packet: \n" + publish_ACK_packet);
+
+//      subscribe packet
+        control = "0x82";
+        variable_header = "0x00" + "0x00";  // packet identifier - 0000 for now
+        length = "0x04" + "0x01"; // number of topic filters in packet (20 bytes)
+        payload = "~~~~" + "0x00" + "0x0c" + "topic filter"; // length of topic filter followed by the topic filter
+        payload += "0x00"; // reserved - do not touch - this is followed by 4 bits having 00XX format, where XX is QoS (10 for at least once)
+        payload += "0x02"; // this can be followed by multiple
+        String subscribe_packet;
+        subscribe_packet = control + length + variable_header + payload;
+        System.out.println("\n Subscribe Packet: \n" + subscribe_packet);
 
 
 //      trying out the packet_parser function
@@ -58,6 +69,7 @@ class MQTTPacket
         packet_parser(connect_ack_packet);
         packet_parser(publish_message_packet);
         packet_parser(publish_ACK_packet);
+        packet_parser(subscribe_packet);
     }
 
     static void packet_parser(String packet)
