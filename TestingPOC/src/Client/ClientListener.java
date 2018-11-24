@@ -1,6 +1,8 @@
 package Client;
 
+import javax.xml.crypto.Data;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -9,24 +11,67 @@ public class ClientListener extends Thread{
 
 
 	Socket socket;
-	
-	public ClientListener(Socket socket) {
+	DataInputStream dataInputStream;
+	DataOutputStream dataOutputStream;
+	 private boolean flag;
+
+    public boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+
+    public ClientListener(Socket socket, boolean flag) {
 		// TODO Auto-generated constructor stub
 		this.socket = socket;
+		this.flag = flag;
 	}
+
 	
 	@Override 
 	public void run() {
 		try {
-			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-			while(true) {
 
-				System.out.println("Received: " + dataInputStream.readUTF());
-			}
-			
-		} catch (IOException e) {
+
+                    dataInputStream = new DataInputStream(socket.getInputStream());
+                    while (true) {
+                        if (flag) {
+
+                            System.out.println("inside client listener");
+
+                            String[] s = dataInputStream.readUTF().split("#");
+                            if (dataInputStream.readUTF().trim().equalsIgnoreCase("40")) {
+                                System.out.println("PubAck: Message got Published successfully");
+                                flag = false;
+                                continue;
+                            }else
+                            if (s[0].equalsIgnoreCase("90")) {
+                                System.out.println("SubAck: Subscribed to Topics successfully");
+                                continue;
+                            } else if (s[0].equalsIgnoreCase("99")) {
+//                        Thread.sleep(2000);
+                                System.out.println("New Data Published fot Topic: " + s[1]);
+                                continue;
+                            } else if (s[0].equalsIgnoreCase("TL")) {
+//                        Thread.sleep(1000);
+                                System.out.println("inside client handler for Topic List");
+                                System.out.println(s[1]);
+//                        wait();
+//                        notifyAll();
+
+                                continue;
+                            }
+                        }
+                    }
+
+
+
+
+    } catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+    }
 }
