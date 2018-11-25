@@ -9,9 +9,9 @@ import java.net.Socket;
 import java.util.*;
 
 public class RequestHandler extends Thread{
-	static Set<String> topicList= new HashSet<>();
+	static Set<String> topicList= TopicDAO.getTopicList();
 	Socket socket;
-	private static HashMap<String, HashSet<Socket>> topicswiseSubs = new HashMap<String, HashSet<Socket>>();
+	private static HashMap<String, HashSet<Socket>> topicswiseSubs = TopicDAO.getTopicswiseSubs();
 	private static HashSet<String> topicForSubs = new HashSet<>();
 	
 	public RequestHandler(Socket socket) {
@@ -44,19 +44,42 @@ public class RequestHandler extends Thread{
 
 				if (dataArr[0].equalsIgnoreCase("30") && topicList.contains(dataArr[3])){
 
-					publishData((HashSet<Socket>) topicswiseSubs.get(dataArr[3]), dataArr[3] + "-" +dataArr[4]);
-//					dataOutputStream.writeUTF("40");
-//					dataOutputStream.flush();
-
-
-				}else if (dataArr[0].equalsIgnoreCase("30")){
-					topicList.add(dataArr[3]);
-//					Server.publishData(socket, topicList);
+					publishData((HashSet<Socket>) TopicDAO.getTopicswiseSubs().get(dataArr[3]), dataArr[3] + "-" +dataArr[4]);
 					dataOutputStream.writeUTF("40");
 					dataOutputStream.flush();
 
 
+				}else if (dataArr[0].equalsIgnoreCase("30")){
+					topicList.add(dataArr[3]);
+					//Global Update
+					TopicDAO.setTopicList(topicList);
+
+					dataOutputStream.writeUTF("44");
+					dataOutputStream.flush();
 				}
+				  if (dataArr[0].equalsIgnoreCase("33")){
+					//local update
+					topicList.add(dataArr[3]);
+					//Global Update
+					TopicDAO.setTopicList(topicList);
+//					Server.publishData(socket, topicList);
+					dataOutputStream.writeUTF("36");
+					dataOutputStream.flush();
+
+
+				}
+
+//				else  if (dataArr[0].equalsIgnoreCase("30")){
+//					//local update
+//					topicList.add(dataArr[3]);
+//					//Global Update
+//					TopicDAO.setTopicList(topicList);
+////					Server.publishData(socket, topicList);
+//					dataOutputStream.writeUTF("40");
+//					dataOutputStream.flush();
+//
+//
+//				}
 				if (dataArr[0].equalsIgnoreCase("TopicList")){
 					System.out.println("Inside server Topic List");
 
@@ -66,7 +89,7 @@ public class RequestHandler extends Thread{
 					}
 					System.out.println(topics.toString());
 
-					dataOutputStream.writeUTF("TL#"+topics.toString());
+					dataOutputStream.writeUTF("TL#"+topics.toString().substring(0,topics.length()));
 					dataOutputStream.flush();
 
 
@@ -79,14 +102,19 @@ public class RequestHandler extends Thread{
 						if (topicswiseSubs.containsKey(s)){
 							sockList = new HashSet<>(topicswiseSubs.get(s));
 							sockList.add(socket);
+							//local Update
 							topicswiseSubs.put(s,sockList );
 						}else {
 							sockList = new HashSet<>();
 							sockList.add(socket);
+							//Local update
 							topicswiseSubs.put(s, sockList);
 
 						}
 					}
+
+					//global update
+					TopicDAO.setTopicswiseSubs(topicswiseSubs);
 					System.out.println(topicswiseSubs);
 
 					dataOutputStream.writeUTF("90");
@@ -94,6 +122,22 @@ public class RequestHandler extends Thread{
 
 
 				}
+
+				if (dataArr[0].equalsIgnoreCase("14")){
+
+
+					//global update
+					TopicDAO.setTopicswiseSubs(topicswiseSubs);
+					System.out.println(topicswiseSubs);
+
+					dataOutputStream.writeUTF("90");
+					dataOutputStream.flush();
+
+
+
+
+				}
+
 
 //				String[] inputArray = inputData.split("-");
 //
@@ -141,8 +185,12 @@ public class RequestHandler extends Thread{
 					DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 					dataOutputStream.writeUTF("99#"+String.valueOf(data));
 					dataOutputStream.flush();
-
+//					DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+//					if (!dataInputStream.readUTF().equalsIgnoreCase("puback")){
+//						return "44";
+//					}
 			}
+
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

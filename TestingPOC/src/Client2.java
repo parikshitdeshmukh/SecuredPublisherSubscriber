@@ -4,46 +4,41 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.*;
 
 public class Client2 {
 
     public static void main(String...args){
 
-        Socket socket = null;
+        HashMap<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
 
-        try {
-//            socket = new Socket("192.168.1.56", 4444);
-            socket = new Socket(InetAddress.getLocalHost(), 4444);
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        map.put(1, list);
+        list.add(4);
+        map.put(2, list);
 
-
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            System.out.println("Sending to Server---");
-
-            while (true) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-                // Reading data using readLine
-                String name = reader.readLine();
-
-                out.writeUTF(name.trim());
-                out.flush();
-
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                String read;
-                System.out.println("Received from Server---- ");
-                if ((read = in.readUTF()) != null) {
-
-                    System.out.println(read);
-                }
+        Iterator itr = map.keySet().iterator();
+        while (itr.hasNext()){
+            Integer k = (Integer) itr.next();
+            if (map.get(k).contains(2)){
+                ArrayList<Integer> l = new ArrayList<>(map.get(k));
+                l.remove(2);
+                itr.remove();
+                map.put(k, l);
             }
-
-//                socket.close();
-
-        } catch (Exception e) {
-            System.out.println("Connection issue");
-            e.printStackTrace();
         }
 
+        for (Map.Entry<Integer, List<Integer>> e: map.entrySet()){
+            if (e.getValue().contains(2)){
+
+                map.remove(e.getKey());
+            }
+        }
+
+        System.out.println(map);
 
     }
 
