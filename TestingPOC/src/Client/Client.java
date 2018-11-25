@@ -142,13 +142,16 @@ public class Client {
 										String publishPacket = "14#12#0007#";
 
 										subOutputStream.writeUTF(publishPacket);
-										dataOutputStream.flush();
+										subOutputStream.flush();
 //												clientListener.setFlag(true);
 //												clientListener.start();
 
 //												wait();
 //												notify();
-										String[] pubAck = dataInputStream.readUTF().trim().split("#");
+//										String[] disAck = dataInputStream.readUTF().trim().split("#");
+//										if (disAck[0].equalsIgnoreCase("144")){
+//                                            System.out.println("Client Disconnected!");
+//                                        }
 //
 										try {
 											subSocket.close();

@@ -50,7 +50,6 @@ public class SubscribeListener extends Thread{
                              input = dataInputStream.readUTF();
                         }catch (Exception e){
                             System.out.println("Subscribe socket closed");
-
                             break;
                         }
                         String[] s  = input.split("#");

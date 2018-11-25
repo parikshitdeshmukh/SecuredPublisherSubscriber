@@ -125,16 +125,24 @@ public class RequestHandler extends Thread{
 
 				if (dataArr[0].equalsIgnoreCase("14")){
 
+					Iterator itr = topicswiseSubs.keySet().iterator();
+					while (itr.hasNext()){
+						String k = (String) itr.next();
+						if (topicswiseSubs.get(k).contains(socket)){
+							HashSet<Socket> l = new HashSet<>(topicswiseSubs.get(k));
+							l.remove(socket);
+							itr.remove();
+							topicswiseSubs.put(k, l);
+						}
+					}
+
 
 					//global update
 					TopicDAO.setTopicswiseSubs(topicswiseSubs);
 					System.out.println(topicswiseSubs);
-
-					dataOutputStream.writeUTF("90");
-					dataOutputStream.flush();
-
-
-
+//
+//					dataOutputStream.writeUTF("144");
+//					dataOutputStream.flush();
 
 				}
 
