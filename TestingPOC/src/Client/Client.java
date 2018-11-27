@@ -2,9 +2,11 @@ package Client;
 
 import Server.RequestHandler;
 
+import javax.xml.crypto.Data;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -23,12 +25,13 @@ public class Client {
 
 					while (true) {
 						Scanner scanner = new Scanner(System.in);
-						Socket socket = new Socket("localhost", 6000);
-						DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 						System.out.println("To connect type Connect and hit enter ");
 						String data = scanner.nextLine();
 						System.out.println("Enter name of ClientID you want to give to this client");
 						String clientID = scanner.nextLine();
+
+						Socket socket = new Socket("localhost", 6000);
+						DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
 						if (data.equalsIgnoreCase("Connect")) {
 							data = "10#12#0004#MQTT#0004#" + clientID;
@@ -39,10 +42,22 @@ public class Client {
 							DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 							String ack = dataInputStream.readUTF();
 
-//					dataInputStream.close();
 							if (ack.equals("20")) {
 								Socket subSocket = new Socket("localhost", 6000);
+								System.out.println(subSocket.getLocalAddress());
+								System.out.println(subSocket.getInetAddress());
+
+								System.out.println(subSocket.getPort());
+								System.out.println(subSocket.getLocalPort());
+
+								DataOutputStream subOutputStream = new DataOutputStream(subSocket.getOutputStream());
+
+								DataInputStream subInputStream = new DataInputStream(subSocket.getInputStream());
 								SubscribeListener subscribeListener = new SubscribeListener(subSocket);
+								subscribeListener.setDataInputStream(subInputStream);
+
+								onInit(subOutputStream, subInputStream);
+								subscribeListener.start();
 
 								System.out.println("Your are now connected; Below are your options");
 
@@ -51,9 +66,9 @@ public class Client {
 									System.out.println("To Publish a new topic enter 1");
 									System.out.println("To Publish a data for some topic enter 2");
 									System.out.println("To get the list of Topic to subscribe enter 3");
-									System.out.println("To Disconnect enter 0");
+									System.out.println("To Unsubscribe to Topics enter 4");
+									System.out.println("To Reset enter 0");
 									String options = scanner.nextLine();
-									DataOutputStream subOutputStream = new DataOutputStream(subSocket.getOutputStream());
 
 									if (options.equalsIgnoreCase("1")) {
 										System.out.println("Enter the name of the topic to be published");
@@ -73,7 +88,7 @@ public class Client {
 										String[] pubAck = dataInputStream.readUTF().trim().split("#");
 //
 										if (pubAck[0].equalsIgnoreCase("36")) {
-											System.out.println("PubAck: Topic added in the Topic list sucessfully");
+											System.out.println("PubAck: Topic added in the Topic list successfully");
 										}
 
 									}
@@ -137,12 +152,16 @@ public class Client {
 //												}
 
 									}
-									if (options.equalsIgnoreCase("0")) {
+									if (options.equalsIgnoreCase("4")) {
 
-										String publishPacket = "14#12#0007#";
+										System.out.println("Enter topic names separated by comma to unsubscribe");
+										String unsubList = scanner.nextLine();
+
+										String publishPacket = "83#12#0007#"+unsubList;
 
 										subOutputStream.writeUTF(publishPacket);
 										subOutputStream.flush();
+
 //												clientListener.setFlag(true);
 //												clientListener.start();
 
@@ -152,20 +171,46 @@ public class Client {
 //										if (disAck[0].equalsIgnoreCase("144")){
 //                                            System.out.println("Client Disconnected!");
 //                                        }
+
+
+									}
+									if (options.equalsIgnoreCase("0")) {
+
+										String publishPacket = "14#12#0007#";
+
+										subOutputStream.writeUTF(publishPacket);
+										subOutputStream.flush();
+
+//												clientListener.setFlag(true);
+//												clientListener.start();
+
+//												wait();
+//												notify();
+//										String[] disAck = dataInputStream.readUTF().trim().split("#");
+//										if (disAck[0].equalsIgnoreCase("144")){
+//                                            System.out.println("Client Disconnected!");
+//                                        }
+
+										//Socket closing
+
+//										try {
+//											subSocket.close();
+//											Thread.sleep(1000);
 //
-										try {
-											subSocket.close();
-											socket.close();
-										}finally {
-											subSocket.close();
-											socket.close();
-										}
-										break;
+//											socket.close();
+//											Thread.sleep(1000);
+//										} catch (InterruptedException e) {
+//											e.printStackTrace();
+//										} finally {
+//											socket.close();
+//										}
+//										break;
 
 									}
 
 
 								}
+//								socket.close();
 
 
 							} else socket.close();
@@ -183,12 +228,30 @@ public class Client {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}finally {
-
 				}
 			}
 
 			}.start();
+
+	}
+
+	private static synchronized void onInit(DataOutputStream subOutputStream, DataInputStream subInputStream) {
+		System.out.println("Inside Init");
+
+		try {
+			subOutputStream.writeUTF("00#");
+			String initAck = subInputStream.readUTF();
+			if (initAck.equals("null")){
+				return;
+			}else {
+				System.out.println(initAck);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
 
 	}
 

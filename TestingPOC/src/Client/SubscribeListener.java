@@ -41,7 +41,7 @@ public class SubscribeListener extends Thread{
 		try {
 
 
-                    dataInputStream = new DataInputStream(socket.getInputStream());
+//                    dataInputStream = new DataInputStream(socket.getInputStream());
                     while (true) {
                         String input="";
 
@@ -60,15 +60,18 @@ public class SubscribeListener extends Thread{
 //                        Thread.sleep(2000);
                                     System.out.println("New Data Published for Topic: " + s[1]);
 //                                    dataOutputStream.writeUTF("PubAck");
-
+                                }else if (s[0].equalsIgnoreCase("93")) {
+                                    System.out.println("Unsubcribed successfully!");
+                                }else if (s[0].equalsIgnoreCase("dis")){
+                                    break;
                                 }
 
                     }
+//                    socket.close();
 
 
 
-
-    } catch (IOException e) {
+    } catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

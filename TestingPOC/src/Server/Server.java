@@ -23,6 +23,8 @@ public class Server {
 					serverSocket = new  ServerSocket(6000);
 					while(true) {
 						Socket socket = serverSocket.accept();
+//						socket.setReuseAddress(true);
+//						serverSocket.setReuseAddress(true);
 						System.out.println("Accepted a conn");
 						socketList.add(socket);
 						new  RequestHandler(socket).start();
