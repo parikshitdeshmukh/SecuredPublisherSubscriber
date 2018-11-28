@@ -30,7 +30,7 @@ public class Client {
 						System.out.println("Enter name of ClientID you want to give to this client");
 						String clientID = scanner.nextLine();
 
-						Socket socket = new Socket("localhost", 6000);
+						Socket socket = new Socket("10.142.0.2", 6000);
 						DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
 						if (data.equalsIgnoreCase("Connect")) {
