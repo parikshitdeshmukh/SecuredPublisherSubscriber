@@ -43,7 +43,7 @@ public class Client {
 							String ack = dataInputStream.readUTF();
 
 							if (ack.equals("20")) {
-								Socket subSocket = new Socket("localhost", 6000);
+								Socket subSocket = new Socket("10.142.0.2", 6000);
 								System.out.println(subSocket.getLocalAddress());
 								System.out.println(subSocket.getInetAddress());
 
