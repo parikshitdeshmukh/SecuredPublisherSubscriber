@@ -1,6 +1,7 @@
 package Server;
 
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.*;
 
 public class TopicDAO {
@@ -20,6 +21,11 @@ public class TopicDAO {
 
     public static void setTopicList(Set<String> topicList) {
         TopicDAO.topicList = topicList;
+    }
+
+    public static void removeBacklog(String hostName) {
+        DBConnectionFactory.removeBacklog(hostName);
+
     }
 
     public Socket getSocket() {
@@ -63,11 +69,13 @@ public class TopicDAO {
         TopicDAO.IP_TopicMap = IP_TopicMap;
     }
 
-    public static HashMap<String, String> getBacklog() {
-        return backlog;
+    public static HashMap<String, String> getBacklog() throws SQLException {
+        return DBConnectionFactory.getBacklog();
     }
 
-    public static void setBacklog(HashMap<String, String> backlog) {
+    public static void setBacklog(HashMap<String, String> backlog) throws SQLException {
+
         TopicDAO.backlog = backlog;
+        DBConnectionFactory.setBacklog(backlog);
     }
 }
