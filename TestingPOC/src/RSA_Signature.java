@@ -45,9 +45,9 @@ public class RSA_Signature
     }
 
     // method to verify signature - RECEIVER METHOD
-    private boolean verifySignature(String data, String signature) throws Exception {
+    private boolean verifySignature(String data, String signature, PublicKey publicKey) throws Exception {
         Signature sig = Signature.getInstance("SHA256withRSA");
-        sig.initVerify(this.getPublicKey());
+        sig.initVerify(publicKey);
         sig.update(data.getBytes());
         return sig.verify(Base64.getDecoder().decode(signature.getBytes()));
     }
@@ -70,6 +70,6 @@ public class RSA_Signature
         System.out.println(signature);
 
 //        testing verification of signature
-        System.out.println(gk.verifySignature(msg, signature));
+        System.out.println(gk.verifySignature(msg, signature, gk.getPublicKey()));
     }
 }
