@@ -1,14 +1,20 @@
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.util.*;
 
 public class Client2 {
 
     public static void main(String...args){
+
+
+
+        String topics = "test1,test2,test3,";
+        System.out.println(topics.substring(0, topics.length()-1));
+        List<String> tl_List = new ArrayList<>(Arrays.asList(new String[]{"test3", "test2", "test1"}));
+
+        StringBuffer topic = new StringBuffer("Test");
+        topic.append(Integer.parseInt(String.valueOf(tl_List.get(0).charAt(4)))+Integer.valueOf(1));
+        System.out.println(topic.toString());
+
+
 
         HashMap<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
 

@@ -10,7 +10,15 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class RequestHandler extends Thread{
-    static Set<String> topicList= TopicDAO.getTopicList();
+//	static Set<String> topicList= TopicDAO.getTopicList();
+
+    //testing
+    static Set<String> topicList= new HashSet<>();
+//	static {
+//		topicList.add("test1");
+//		topicList.add("test2");
+//	}
+
     Socket socket;
     ArrayList<String> ipList = TopicDAO.getIpList();
     private static HashMap<String, HashSet<Socket>> topicswiseSubs = TopicDAO.getTopicswiseSubs();
@@ -138,7 +146,7 @@ public class RequestHandler extends Thread{
 
                     }
 
-                    if (dataArr[0].equalsIgnoreCase("30") && topicList.contains(dataArr[3])) {
+                    if (dataArr[0].equalsIgnoreCase("30") && topicswiseSubs.containsKey(dataArr[3])) {
 
                         topicswiseSubs =  TopicDAO.getTopicswiseSubs();
                         publishData(topicswiseSubs, dataArr[3], dataArr[3] + "-" + dataArr[4]);
@@ -184,9 +192,15 @@ public class RequestHandler extends Thread{
                         for (String s : topicList) {
                             topics.append(s + ",");
                         }
-                        System.out.println(topics.toString());
+                        System.out.println("TopicsList as a String to be sent back: "+topics.toString());
+                        if (topics.length()==0){
+                            dataOutputStream.writeUTF("TL#");
 
-                        dataOutputStream.writeUTF("TL#" + topics.toString().substring(0, topics.length()));
+
+                        }else
+                            dataOutputStream.writeUTF("TL#" + topics.toString().substring(0, topics.length()-1));
+
+
                         dataOutputStream.flush();
 
 
@@ -359,6 +373,7 @@ public class RequestHandler extends Thread{
 
     public static synchronized void publishData(HashMap<String, HashSet<Socket>> topicswiseSubs, String topic, String data) {
         try {
+            System.out.println(topicswiseSubs);
 
             for (Socket socket : topicswiseSubs.get(topic)) {
                 //If the node crashes, storing the missed data against it's IP
@@ -415,7 +430,8 @@ public class RequestHandler extends Thread{
 //					}
             }
 
-            TopicDAO.setBacklog(backlog);
+            if (!backlog.isEmpty())
+                TopicDAO.setBacklog(backlog);
 
 
         } catch(IOException e) {
