@@ -1,22 +1,27 @@
 package Client;
 
+import Signature.RSA_Signature;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
+// import java.net.UnknownHostException;
 import java.util.Scanner;
-
+// import java.security.NoSuchAlgorithmException;
+// import java.security.NoSuchProviderException;
+// import java.security.InvalidKeyException;
+// import java.security.SignatureException; 
 
 public class Client {
     static boolean flag = false;
 
-    public  static void main(String args[]) throws InterruptedException {
+    public  static void main(String args[]) throws InterruptedException, Exception {
         new Thread() {
 
             @Override
-            public void run() {
-                try {
+            public void run(){
+                try 
+                {
 
                     while (true) {
                         Scanner scanner = new Scanner(System.in);
@@ -100,6 +105,16 @@ public class Client {
                                         String info = scanner.nextLine();
 
                                         String publishPacket = "30#12#0007#" + topic + "#" + info;
+                                        String signature = "";
+
+                                        RSA_Signature gk = new RSA_Signature(2048);
+                                        gk.createKeys();
+                                        signature = gk.sign(info, gk);           
+
+                                        // System.out.println("signature: " + signature);                                     
+
+                                        publishPacket += "#" + signature + "#" + gk.storePublicKey(gk.getPublicKey()); 
+
 
                                         dataOutputStream.writeUTF(publishPacket);
                                         dataOutputStream.flush();
@@ -221,17 +236,31 @@ public class Client {
 
                             //else disconnect
                         } else socket.close();
-
-
                     }
 
-                } catch (UnknownHostException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
+                } 
+                catch(Exception e){
                     e.printStackTrace();
                 }
+                // catch (UnknownHostException e) {
+                //     // TODO Auto-generated catch block
+                //     e.printStackTrace();
+                // } catch (IOException e) {
+                //     // TODO Auto-generated catch block
+                //     e.printStackTrace();
+                // }
+                // catch(NoSuchAlgorithmException e){
+                //     e.printStackTrace();
+                // }
+                // catch(InvalidKeyException e){
+                //     e.printStackTrace();
+                // }
+                // catch(NoSuchProviderException e){
+                //     e.printStackTrace();
+                // }
+                // catch(SignatureException e){
+                //     e.printStackTrace();
+                // }
             }
 
         }.start();
