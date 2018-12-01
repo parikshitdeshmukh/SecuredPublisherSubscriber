@@ -1,8 +1,10 @@
 package Client;
 
+import Signature.RSA_Signature;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+
 
 public class SubscribeListener extends Thread{
 
@@ -42,6 +44,8 @@ public class SubscribeListener extends Thread{
 //                    dataInputStream = new DataInputStream(socket.getInputStream());
 //                dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
+            RSA_Signature gk = new RSA_Signature(2048);
+            
             while (true) {
                 String input="";
 
@@ -58,7 +62,18 @@ public class SubscribeListener extends Thread{
                     System.out.println("SubAck: Subscribed to Topics successfully");
                 } else if (s[0].equalsIgnoreCase("99")) {
 //                        Thread.sleep(2000);
-                    System.out.println("New Data Published for Topic: " + s[1]);
+                    
+                    String[] stuff = s[1].split("-");
+                    String topic = stuff[0];
+                    // System.out.println("s[1].split(-)[0] / topic: "+ topic);
+                    stuff = stuff[1].split("~~~~");
+                    // System.out.println("stuff: \n[0]: "+ stuff[0] + "\n[1]: " + stuff[1] + "\n[2]: " + gk.loadPublicKey(stuff[2]));
+                    // msg, sig, public key
+                    // System.out.println(gk.verifySignature(stuff[0], stuff[1], gk.loadPublicKey(stuff[2])));
+                    if (gk.verifySignature(stuff[0], stuff[1], gk.loadPublicKey(stuff[2])))
+                        System.out.println("New Data Published for Topic: " + topic + "-" + stuff[0]);
+                    else
+                        System.out.println("The data was modified!");
 //                                    dataOutputStream.writeUTF("PubAck");
 //                                    dataOutputStream.flush();
                 }else if (s[0].equalsIgnoreCase("93")) {
