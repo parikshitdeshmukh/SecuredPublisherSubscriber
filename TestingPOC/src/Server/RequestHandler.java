@@ -149,7 +149,7 @@ public class RequestHandler extends Thread{
                      if (dataArr[0].equalsIgnoreCase("30") && topicswiseSubs.containsKey(dataArr[3])) {
 
                         topicswiseSubs =  TopicDAO.getTopicswiseSubs();
-                        System.out.println("Inside Publisher "+ dataArr[3] + "-" + dataArr[4])
+                        System.out.println("Inside Publisher "+ dataArr[3] + "-" + dataArr[4]);
                         publishData(topicswiseSubs, dataArr[3], dataArr[3] + "-" + dataArr[4] + "~~~~" + dataArr[5] + "~~~~" + dataArr[6]);
                         dataOutputStream.writeUTF("40");
                         dataOutputStream.flush();
