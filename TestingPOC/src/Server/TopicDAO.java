@@ -1,5 +1,7 @@
 package Server;
 
+import org.apache.log4j.Logger;
+
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.*;
@@ -7,13 +9,19 @@ import java.util.*;
 public class TopicDAO {
 
     static Set<String> topicList= new HashSet<>();
+    private static Logger logger;
     Socket socket;
     private static HashMap<String, HashSet<Socket>> topicswiseSubs = new HashMap<String, HashSet<Socket>>();
     private static HashSet<String> topicForSubs = new HashSet<>();
     private static ArrayList<String> ipList = new ArrayList<>();
     private static HashMap<String, List<String>> IP_TopicMap = new HashMap<>();
-    private static HashMap<String, String> backlog = new HashMap<>();
-
+    private static HashMap<String, ArrayList<String>> backlog = new HashMap<>();
+    private static HashSet<String> allUpList = new HashSet<>();
+    private static List<String> lostData = new ArrayList<>();
+    private static ArrayList<String> thisBacklog = new ArrayList<>();
+//    static {
+//        DBConnectionFactory.setLogger(logger);
+//    }
 
     public static Set<String> getTopicList() {
         return topicList;
@@ -26,6 +34,22 @@ public class TopicDAO {
     public static void removeBacklog(String hostName) {
         DBConnectionFactory.removeBacklog(hostName);
 
+    }
+
+    public static void setLogger(Logger logger) {
+        TopicDAO.logger = logger;
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public static ArrayList<String> getThisBacklog() {
+        return thisBacklog;
+    }
+
+    public static void setThisBacklog(ArrayList<String> thisBacklog) {
+        TopicDAO.thisBacklog = thisBacklog;
     }
 
     public Socket getSocket() {
@@ -69,13 +93,30 @@ public class TopicDAO {
         TopicDAO.IP_TopicMap = IP_TopicMap;
     }
 
-    public static HashMap<String, String> getBacklog() throws SQLException {
-        return DBConnectionFactory.getBacklog();
+    public static ArrayList<String> getBacklog(String IP) throws SQLException {
+        return DBConnectionFactory.getBacklog(IP);
     }
 
-    public static void setBacklog(HashMap<String, String> backlog) throws SQLException {
+    public static synchronized boolean setBacklog(HashMap<String, ArrayList<String>> backlog) throws SQLException {
 
         TopicDAO.backlog = backlog;
-        DBConnectionFactory.setBacklog(backlog);
+        return DBConnectionFactory.setBacklog(backlog);
+    }
+
+    public static HashSet<String> getAllUpList() {
+        return allUpList;
+    }
+
+    public static void setAllUpList(HashSet<String> allUpList) {
+        TopicDAO.allUpList = allUpList;
+    }
+
+
+    public static List<String> getLostData() {
+        return lostData;
+    }
+
+    public static void setLostData(List<String> lostData) {
+        TopicDAO.lostData = lostData;
     }
 }

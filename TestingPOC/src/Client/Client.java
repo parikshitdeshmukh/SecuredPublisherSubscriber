@@ -1,27 +1,30 @@
 package Client;
 
-import Signature.RSA_Signature;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-// import java.net.UnknownHostException;
+import java.net.UnknownHostException;
+import java.security.*;
 import java.util.Scanner;
-// import java.security.NoSuchAlgorithmException;
-// import java.security.NoSuchProviderException;
-// import java.security.InvalidKeyException;
-// import java.security.SignatureException; 
+
 
 public class Client {
     static boolean flag = false;
+    static Logger logger = Logger.getLogger(Client.class);
 
-    public  static void main(String args[]) throws InterruptedException, Exception {
+
+    public  static void main(String args[]) throws InterruptedException {
+        PropertyConfigurator.configure(Client.class.getResourceAsStream("log4j.info"));
+
         new Thread() {
 
             @Override
-            public void run(){
-                try 
-                {
+            public void run() {
+                try {
 
                     while (true) {
                         Scanner scanner = new Scanner(System.in);
@@ -30,8 +33,8 @@ public class Client {
                         System.out.println("Enter name of ClientID you want to give to this client");
                         String clientID = scanner.nextLine();
 
-                        Socket socket = new Socket("10.142.0.2", 6000);
-//						Socket socket = new Socket("localhost", 6000);
+//						Socket socket = new Socket("10.142.0.2", 6000);
+                        Socket socket = new Socket("localhost", 6000);
 
                         DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
@@ -45,8 +48,8 @@ public class Client {
                             String ack = dataInputStream.readUTF();
 
                             if (ack.equals("20")) {
-                                Socket subSocket = new Socket("10.142.0.2", 6000);
-//								Socket subSocket = new Socket("localhost", 6000);
+//								Socket subSocket = new Socket("10.142.0.2", 6000);
+                                Socket subSocket = new Socket("localhost", 6000);
 
                                 System.out.println(subSocket.getLocalAddress());
                                 System.out.println(subSocket.getInetAddress());
@@ -55,18 +58,24 @@ public class Client {
                                 System.out.println(subSocket.getLocalPort());
 
                                 DataOutputStream subOutputStream = new DataOutputStream(subSocket.getOutputStream());
-
                                 DataInputStream subInputStream = new DataInputStream(subSocket.getInputStream());
-                                SubscribeListener subscribeListener = new SubscribeListener(subSocket);
-                                subscribeListener.setDataInputStream(subInputStream);
-//								subscribeListener.setDataOutputStream(subOutputStream);
 
                                 onInit(subOutputStream, subInputStream);
-                                subscribeListener.start();
+                                SubscribeListener subscribeListener = new SubscribeListener(subSocket);
+
+                                subscribeListener.setDataInputStream(subInputStream);
+                                subscribeListener.setLogger(logger);
+                                subscribeListener.setDataOutputStream(subOutputStream);
+
+                                if (!subscribeListener.isAlive()) {
+                                    subscribeListener.start();
+                                }
 
                                 System.out.println("Your are now connected; Below are your options");
 
+
                                 while (true) {
+
 
                                     System.out.println("To Publish a new topic enter 1");
                                     System.out.println("To Publish a data for some topic enter 2");
@@ -78,6 +87,7 @@ public class Client {
                                     if (options.equalsIgnoreCase("1")) {
                                         System.out.println("Enter the name of the topic to be published");
                                         String topic = scanner.nextLine();
+
 //										System.out.println("Enter the data or info to be published for this Topic: ");
 //										String info = scanner.nextLine();
 
@@ -96,12 +106,13 @@ public class Client {
                                             System.out.println("PubAck: Topic added in the Topic list successfully");
                                         }
 
+
+
                                     }
 
                                     if (options.equalsIgnoreCase("2")) {
                                         System.out.println("Enter the name of the topic and the data or info to be published for this Topic:");
                                         String topic = scanner.nextLine();
-//										System.out.println("Enter the data or info to be published for this Topic: ");
                                         String info = scanner.nextLine();
 
                                         String publishPacket = "30#12#0007#" + topic + "#" + info;
@@ -109,11 +120,11 @@ public class Client {
 
                                         RSA_Signature gk = new RSA_Signature(2048);
                                         gk.createKeys();
-                                        signature = gk.sign(info, gk);           
+                                        signature = gk.sign(info, gk);
 
-                                        // System.out.println("signature: " + signature);                                     
+                                        // System.out.println("signature: " + signature);
 
-                                        publishPacket += "#" + signature + "#" + gk.storePublicKey(gk.getPublicKey()); 
+                                        publishPacket += "#" + signature + "#" + gk.storePublicKey(gk.getPublicKey());
 
 
                                         dataOutputStream.writeUTF(publishPacket);
@@ -129,9 +140,10 @@ public class Client {
                                             System.out.println("PubAck: Message got Published successfully");
                                         } else if (pubAck[0].equalsIgnoreCase("99")) {
                                             System.out.println(pubAck[1]);
-                                        }else if (pubAck[0].equalsIgnoreCase("44")){
+                                        } else if (pubAck[0].equalsIgnoreCase("44")) {
                                             System.out.println("Added the Topic in the Topic Pool; But data was not published being a new topic; Republish the dat using Option 2");
                                         }
+
 
                                     }
 
@@ -154,8 +166,14 @@ public class Client {
 
                                         String subPacket = "82#0D#0001#" + topicList + "#00";
 
-                                        subOutputStream.writeUTF(subPacket);
+                                        subOutputStream.writeUTF(subPacket+"\n");
                                         subOutputStream.flush();
+//										subOutputStream.close();
+
+                                        subscribeListener.setDataInputStream(subInputStream);
+                                        subscribeListener.setLogger(logger);
+                                        subscribeListener.setDataOutputStream(subOutputStream);
+
                                         if (!subscribeListener.isAlive()) {
                                             subscribeListener.start();
                                         }
@@ -226,6 +244,43 @@ public class Client {
 
                                     }
 
+                                    if (options.equalsIgnoreCase("007")) {
+
+//                                        String publishPacket = "14#12#0007#";
+//
+//                                        subOutputStream.writeUTF(publishPacket);
+//                                        subOutputStream.flush();
+
+
+
+//												clientListener.setFlag(true);
+//												clientListener.start();
+
+//												wait();
+//												notify();
+//										String[] disAck = dataInputStream.readUTF().trim().split("#");
+//										if (disAck[0].equalsIgnoreCase("144")){
+//                                            System.out.println("Client Disconnected!");
+//                                        }
+
+                                        //Socket closing
+
+                                        try {
+                                            subSocket.close();
+                                            Thread.sleep(1000);
+
+                                            socket.close();
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        } finally {
+                                            socket.close();
+                                        }
+                                        break;
+
+                                    }
+
+
 
                                 }
 //								socket.close();
@@ -236,39 +291,34 @@ public class Client {
 
                             //else disconnect
                         } else socket.close();
+
+
                     }
 
-                } 
-                catch(Exception e){
+                } catch (UnknownHostException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                // catch (UnknownHostException e) {
-                //     // TODO Auto-generated catch block
-                //     e.printStackTrace();
-                // } catch (IOException e) {
-                //     // TODO Auto-generated catch block
-                //     e.printStackTrace();
-                // }
-                // catch(NoSuchAlgorithmException e){
-                //     e.printStackTrace();
-                // }
-                // catch(InvalidKeyException e){
-                //     e.printStackTrace();
-                // }
-                // catch(NoSuchProviderException e){
-                //     e.printStackTrace();
-                // }
-                // catch(SignatureException e){
-                //     e.printStackTrace();
-                // }
             }
 
         }.start();
 
     }
 
+    //Prints Backlog
     private static synchronized void onInit(DataOutputStream subOutputStream, DataInputStream subInputStream) {
-        System.out.println("Inside Init");
+        logger.info("Inside Init");
 
         try {
             subOutputStream.writeUTF("00#");
@@ -278,13 +328,39 @@ public class Client {
             if (initAck.equals("null")){
                 return;
             }else {
-                System.out.println(initAck);
+                // System.out.println(initAck);
+                logger.debug("Backlog Data: ");
+                RSA_Signature gk = new RSA_Signature(2048);
+                String [] bklg = initAck.split("##"); // missed_stuff#data1##data2##etc
+                int len = bklg.length;
+                String [] stuff;
+                String topic;
+                for(int i = 0; i<len; i++)
+                {
+                    stuff = bklg[i].split("-");
+                    topic = stuff[0];
+                    stuff = stuff[1].split("~~~~");
+
+                    if(gk.verifySignature(stuff[0], stuff[1], gk.loadPublicKey(stuff[2])))
+                        logger.info(topic + ": "+ stuff[0]);
+                    else
+                        logger.info("The data was modified!");
+                }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
 
 
     }

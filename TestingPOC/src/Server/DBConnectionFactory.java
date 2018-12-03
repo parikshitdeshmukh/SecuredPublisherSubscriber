@@ -2,16 +2,20 @@ package Server;
 
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class DBConnectionFactory {
+
+    static Logger logger = RequestHandler.logger;
 
 
     private static BasicDataSource ds = new BasicDataSource();
@@ -37,6 +41,7 @@ public class DBConnectionFactory {
                     + "&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false",
             databaseName,
             instanceConnectionName);
+//    private static Logger logger;
 
     static {
         ds.setUrl(jdbcUrl);
@@ -54,28 +59,31 @@ public class DBConnectionFactory {
     private DBConnectionFactory() throws SQLException {
     }
 
-    public static HashMap<String, String> getBacklog() throws SQLException {
+    public static ArrayList<String> getBacklog(String IP) throws SQLException {
 
-        HashMap<String, String> map = new HashMap<>();
+        ArrayList<String> dataList = new ArrayList<>();
 
         Connection connection= DBConnectionFactory.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("select * from Backlog");
+        PreparedStatement stmt = connection.prepareStatement("select Data from Backlog where IPAdd=?");
+        stmt.setString(1, IP);
 
 
         try {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                map.put(rs.getString(1), rs.getString(2));
-                System.out.println("At the DB Factory: "+rs.getString(1) + "#" + rs.getString(2));
+                dataList.add(rs.getString(1));
+
+                logger.info("Backlog from  DB Factory: "+rs.getString(1));
+                System.out.println("At the DB Factory: "+rs.getString(1) );
             }
         } finally {
             connection.close();
         }
 
-        return map;
+        return dataList;
     }
 
-    public static void setBacklog(HashMap<String, String> map) throws SQLException {
+    public static synchronized boolean setBacklog(HashMap<String, ArrayList<String>> map) throws SQLException {
 
 
         Connection connection= null;
@@ -83,19 +91,26 @@ public class DBConnectionFactory {
 
         try {
             connection = DBConnectionFactory.getConnection();
+            System.out.println("At the DB Factory Inserting the backlog");
 
 
-            stmt = connection.prepareStatement("insert into Backlog(IPAdd, Data) values(?,?) on duplicate key update Data=?");
+//            stmt = connection.prepareStatement("insert into Backlog(IPAdd, Data) values(?,?) on duplicate key update Data=?");
+            stmt = connection.prepareStatement("insert into Backlog(IPAdd, Data) values(?,?)");
 
-            for (Map.Entry<String, String> e: map.entrySet()){
 
-                stmt.setString(1, e.getKey().toString());
-                stmt.setString(2, e.getValue().toString());
-                stmt.setString(3, e.getValue());
-                stmt.addBatch();
+//            System.out.println(map);
+            for (Map.Entry<String, ArrayList<String>> e: map.entrySet()){
+                for (String s: e.getValue()){
+                    stmt.setString(1, e.getKey().toString());
+                    stmt.setString(2, s);
+                    stmt.addBatch();
+                }
             }
 
-            stmt.executeBatch();
+            if (stmt.executeBatch().length>0){
+                System.out.println("At DB Factory, returned batch length > 0");
+                return true;
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -113,6 +128,8 @@ public class DBConnectionFactory {
                 } // nothing we can do
             }
         }
+
+        return false;
 
 
     }
@@ -149,6 +166,14 @@ public class DBConnectionFactory {
         }
 
     }
+//
+//    public static void setLogger(Logger logger) {
+//        DBConnectionFactory.logger = logger;
+//    }
+//
+//    public static Logger getLogger() {
+//        return logger;
+//    }
 }
 //    private static Connection getConn() throws IOException, SQLException {
 //        // TODO: fill this in
