@@ -23,11 +23,11 @@ public class DBConnectionFactory {
     // TODO: fill this in
     // The instance connection name can be obtained from the instance overview page in Cloud Console
     // or by running "gcloud sql instances describe <instance> | grep connectionName".
-    static String instanceConnectionName = "pubsubmastersproject:us-central1:myinstance";
+    static String instanceConnectionName = "secured-pub-sub-system:us-east1:pubsubsql";
 
     // TODO: fill this in
     // The database from which to list tables.
-    static String databaseName = "BrokerStorage";
+    static String databaseName = "pubsub";
 
     static String username = "root";
 
@@ -58,6 +58,26 @@ public class DBConnectionFactory {
 
     private DBConnectionFactory() throws SQLException {
     }
+
+    // public void insertIP (String IPAddress, String publicKey){
+    //     Connection connection = DBConnectionFactory getConnection();
+    //     PreparedStatement query = connection.prepareStatement("INSERT INTO PKeys (IPAddress, publicKey) VALUES (?, ?)");
+    //     query.setString(1, IPAddress);
+    //     query.setString(2, publicKey);
+    //     query.executeQuery();
+    // }
+
+    // public String retriveKey (String IPAddress){
+    //     Connection connection = DBConnectionFactory getConnection();
+    //     PreparedStatement query = connection.prepareStatement("SELECT publicKey FROM PKeys WHERE IPAddress = ?");
+    //     query.setString(1, IPAddress);
+    //     ResultSet rs = query.executeQuery();
+    //     String publicKey = "";
+    //     while(rs.next()){
+    //         publicKey = rs.getString(1);
+    //     }
+    //     return publicKey;
+    // }
 
     public static ArrayList<String> getBacklog(String IP) throws SQLException {
 
