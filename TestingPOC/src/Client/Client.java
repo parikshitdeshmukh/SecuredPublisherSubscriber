@@ -12,10 +12,23 @@ import java.security.*;
 import java.util.Scanner;
 
 
-public class Client {
+public class Client{
     static boolean flag = false;
     static Logger logger = Logger.getLogger(Client.class);
+//    static RSA_Signature gk = new RSA_Signature(2048);
+    static RSA_Signature gk;
 
+    static {
+        try {
+            gk = new RSA_Signature(2048);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+    }
 
     public  static void main(String args[]) throws InterruptedException {
         PropertyConfigurator.configure(Client.class.getResourceAsStream("log4j.info"));
@@ -24,6 +37,7 @@ public class Client {
 
             @Override
             public void run() {
+                String publicKey;
                 try {
 
                     while (true) {
@@ -33,8 +47,8 @@ public class Client {
                         System.out.println("Enter name of ClientID you want to give to this client");
                         String clientID = scanner.nextLine();
 
-//						Socket socket = new Socket("10.142.0.2", 6000);
-                        Socket socket = new Socket("localhost", 6000);
+                     Socket socket = new Socket("10.142.0.2", 6000);
+                        // Socket socket = new Socket("localhost", 6000);
 
                         DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
@@ -48,8 +62,8 @@ public class Client {
                             String ack = dataInputStream.readUTF();
 
                             if (ack.equals("20")) {
-//								Socket subSocket = new Socket("10.142.0.2", 6000);
-                                Socket subSocket = new Socket("localhost", 6000);
+                             Socket subSocket = new Socket("10.142.0.2", 6000);
+                                // Socket subSocket = new Socket("localhost", 6000);
 
                                 System.out.println(subSocket.getLocalAddress());
                                 System.out.println(subSocket.getInetAddress());
@@ -60,7 +74,7 @@ public class Client {
                                 DataOutputStream subOutputStream = new DataOutputStream(subSocket.getOutputStream());
                                 DataInputStream subInputStream = new DataInputStream(subSocket.getInputStream());
 
-                                onInit(subOutputStream, subInputStream);
+                                publicKey = onInit(subOutputStream, subInputStream);
                                 SubscribeListener subscribeListener = new SubscribeListener(subSocket);
 
                                 subscribeListener.setDataInputStream(subInputStream);
@@ -88,18 +102,18 @@ public class Client {
                                         System.out.println("Enter the name of the topic to be published");
                                         String topic = scanner.nextLine();
 
-//										System.out.println("Enter the data or info to be published for this Topic: ");
-//										String info = scanner.nextLine();
+//                                      System.out.println("Enter the data or info to be published for this Topic: ");
+//                                      String info = scanner.nextLine();
 
                                         String publishPacket = "33#12#0007#" + topic.trim();
 
                                         dataOutputStream.writeUTF(publishPacket);
                                         dataOutputStream.flush();
-//												clientListener.setFlag(true);
-//												clientListener.start();
+//                                              clientListener.setFlag(true);
+//                                              clientListener.start();
 
-//												wait();
-//												notify();
+//                                              wait();
+//                                              notify();
                                         String[] pubAck = dataInputStream.readUTF().trim().split("#");
 //
                                         if (pubAck[0].equalsIgnoreCase("36")) {
@@ -118,22 +132,23 @@ public class Client {
                                         String publishPacket = "30#12#0007#" + topic + "#" + info;
                                         String signature = "";
 
-                                        RSA_Signature gk = new RSA_Signature(2048);
-                                        gk.createKeys();
+                                        // RSA_Signature gk = new RSA_Signature(2048);
+                                        // gk.createKeys();
                                         signature = gk.sign(info, gk);
 
                                         // System.out.println("signature: " + signature);
+//                                        System.out.println("publicKey: " + publicKey);
 
-                                        publishPacket += "#" + signature + "#" + gk.storePublicKey(gk.getPublicKey());
-
+                                        publishPacket += "#" + signature + "#" + publicKey;
+                                        // publishPacket += "#" + signature + "#" + socket.getInetAddress().getLocalAddress();
 
                                         dataOutputStream.writeUTF(publishPacket);
                                         dataOutputStream.flush();
-//												clientListener.setFlag(true);
-//												clientListener.start();
+//                                              clientListener.setFlag(true);
+//                                              clientListener.start();
 
-//												wait();
-//												notify();
+//                                              wait();
+//                                              notify();
                                         String[] pubAck = dataInputStream.readUTF().trim().split("#");
 //
                                         if (pubAck[0].equalsIgnoreCase("40")) {
@@ -156,10 +171,10 @@ public class Client {
                                             continue;
                                         }
                                         System.out.println(s[1]);
-//												wait();
-//												notify();
-//												Thread.sleep(2000);
-//												yield();
+//                                              wait();
+//                                              notify();
+//                                              Thread.sleep(2000);
+//                                              yield();
 
                                         System.out.println("Enter the names of the topic to Subscribe to separated by comma");
                                         String topicList = scanner.nextLine();
@@ -168,7 +183,7 @@ public class Client {
 
                                         subOutputStream.writeUTF(subPacket+"\n");
                                         subOutputStream.flush();
-//										subOutputStream.close();
+//                                      subOutputStream.close();
 
                                         subscribeListener.setDataInputStream(subInputStream);
                                         subscribeListener.setLogger(logger);
@@ -177,12 +192,12 @@ public class Client {
                                         if (!subscribeListener.isAlive()) {
                                             subscribeListener.start();
                                         }
-//										subscribeListener.setDataOutputStream(subOutputStream);
+//                                      subscribeListener.setDataOutputStream(subOutputStream);
 
 
-//												if (dataInputStream.readUTF().trim().equalsIgnoreCase("90")) {
-//													System.out.println("SubAck: Subscribed to Topics successfully");
-//												}
+//                                              if (dataInputStream.readUTF().trim().equalsIgnoreCase("90")) {
+//                                                  System.out.println("SubAck: Subscribed to Topics successfully");
+//                                              }
 
                                     }
                                     if (options.equalsIgnoreCase("4")) {
@@ -196,13 +211,13 @@ public class Client {
                                         subOutputStream.flush();
 
 
-//												clientListener.setFlag(true);
-//												clientListener.start();
+//                                              clientListener.setFlag(true);
+//                                              clientListener.start();
 
-//												wait();
-//												notify();
-//										String[] disAck = dataInputStream.readUTF().trim().split("#");
-//										if (disAck[0].equalsIgnoreCase("144")){
+//                                              wait();
+//                                              notify();
+//                                      String[] disAck = dataInputStream.readUTF().trim().split("#");
+//                                      if (disAck[0].equalsIgnoreCase("144")){
 //                                            System.out.println("Client Disconnected!");
 //                                        }
 
@@ -217,30 +232,30 @@ public class Client {
 
 
 
-//												clientListener.setFlag(true);
-//												clientListener.start();
+//                                              clientListener.setFlag(true);
+//                                              clientListener.start();
 
-//												wait();
-//												notify();
-//										String[] disAck = dataInputStream.readUTF().trim().split("#");
-//										if (disAck[0].equalsIgnoreCase("144")){
+//                                              wait();
+//                                              notify();
+//                                      String[] disAck = dataInputStream.readUTF().trim().split("#");
+//                                      if (disAck[0].equalsIgnoreCase("144")){
 //                                            System.out.println("Client Disconnected!");
 //                                        }
 
                                         //Socket closing
 
-//										try {
-//											subSocket.close();
-//											Thread.sleep(1000);
+//                                      try {
+//                                          subSocket.close();
+//                                          Thread.sleep(1000);
 //
-//											socket.close();
-//											Thread.sleep(1000);
-//										} catch (InterruptedException e) {
-//											e.printStackTrace();
-//										} finally {
-//											socket.close();
-//										}
-//										break;
+//                                          socket.close();
+//                                          Thread.sleep(1000);
+//                                      } catch (InterruptedException e) {
+//                                          e.printStackTrace();
+//                                      } finally {
+//                                          socket.close();
+//                                      }
+//                                      break;
 
                                     }
 
@@ -253,13 +268,13 @@ public class Client {
 
 
 
-//												clientListener.setFlag(true);
-//												clientListener.start();
+//                                              clientListener.setFlag(true);
+//                                              clientListener.start();
 
-//												wait();
-//												notify();
-//										String[] disAck = dataInputStream.readUTF().trim().split("#");
-//										if (disAck[0].equalsIgnoreCase("144")){
+//                                              wait();
+//                                              notify();
+//                                      String[] disAck = dataInputStream.readUTF().trim().split("#");
+//                                      if (disAck[0].equalsIgnoreCase("144")){
 //                                            System.out.println("Client Disconnected!");
 //                                        }
 
@@ -283,7 +298,7 @@ public class Client {
 
 
                                 }
-//								socket.close();
+//                              socket.close();
 
 
                             } else socket.close();
@@ -317,20 +332,26 @@ public class Client {
     }
 
     //Prints Backlog
-    private static synchronized void onInit(DataOutputStream subOutputStream, DataInputStream subInputStream) {
+    private static synchronized String onInit(DataOutputStream subOutputStream, DataInputStream subInputStream) {
         logger.info("Inside Init");
-
+        String publicKey = "";
         try {
-            subOutputStream.writeUTF("00#");
+            // RSA_Signature gk = new RSA_Signature(2048);
+            gk.createKeys(); // generate one set pf keys for each node
+            publicKey = gk.storePublicKey(gk.getPublicKey());
+            subOutputStream.writeUTF("00#" + publicKey);
             subOutputStream.flush();
-//			subOutputStream.close();
+//          subOutputStream.close();
             String initAck = subInputStream.readUTF();
-            if (initAck.equals("null")){
-                return;
-            }else {
+            if (initAck.equals("null"))
+            {
+                return publicKey;
+            }
+            else 
+            {
                 // System.out.println(initAck);
                 logger.debug("Backlog Data: ");
-                RSA_Signature gk = new RSA_Signature(2048);
+                // DBConnectionFactory db = new DBConnectionFactory();
                 String [] bklg = initAck.split("##"); // missed_stuff#data1##data2##etc
                 int len = bklg.length;
                 String [] stuff;
@@ -341,11 +362,13 @@ public class Client {
                     topic = stuff[0];
                     stuff = stuff[1].split("~~~~");
 
+                    // publicKey = db.retrieveKey(stuff[2]);
                     if(gk.verifySignature(stuff[0], stuff[1], gk.loadPublicKey(stuff[2])))
                         logger.info(topic + ": "+ stuff[0]);
                     else
                         logger.info("The data was modified!");
                 }
+
             }
 
         } catch (IOException e) {
@@ -362,7 +385,7 @@ public class Client {
             e.printStackTrace();
         }
 
-
+        return publicKey;
     }
 
 }
