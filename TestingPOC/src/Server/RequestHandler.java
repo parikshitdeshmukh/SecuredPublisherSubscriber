@@ -23,7 +23,7 @@ public class RequestHandler extends Thread{
 
     static boolean flag = false;
     static Logger logger = Logger.getLogger(RequestHandler.class);
-    static Socket socket;
+    Socket socket;
     ArrayList<String> ipList = TopicDAO.getIpList();
     private static HashMap<String, HashSet<Socket>> topicswiseSubs = TopicDAO.getTopicswiseSubs();
     private static HashMap<String, List<String>> IP_TopicMap = TopicDAO.getIP_TopicMap();
@@ -32,6 +32,10 @@ public class RequestHandler extends Thread{
     private static HashSet<String> allUpList = TopicDAO.getAllUpList();
     private static List<String> lostData = TopicDAO.getLostData();
     private static ArrayList<String> thisBacklog = TopicDAO.getThisBacklog();
+//    private static HashMap<String, String> keyMap HashMap<> ();
+    private static HashMap<String, String> keyMap = TopicDAO.getKeyMap();
+
+
 
 //	static {
 //		try {
@@ -65,7 +69,6 @@ public class RequestHandler extends Thread{
         try {
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
-
             while(true) {
                 try {
                     logger.info("Inside the server");
@@ -75,6 +78,15 @@ public class RequestHandler extends Thread{
                     String[] dataArr = inputData.split("#");
 
                     if (dataArr[0].equalsIgnoreCase("00")) {
+
+                        // inserting IPAddress and publicKey of new publisher into keyMap
+//                        keyMap.put(socket.getInetAddress().getHostAddress(), dataArr[1]);
+//                        System.out.println(keyMap);
+
+                        keyMap = TopicDAO.getKeyMap();
+                        keyMap.put(socket.getInetAddress().getHostAddress(), dataArr[1]);
+
+                        TopicDAO.setKeyMap(keyMap);
 
                         logger.info(ipList);
                         System.out.println(IP_TopicMap);
@@ -190,7 +202,17 @@ public class RequestHandler extends Thread{
                         logger.info("Inside Publisher "+ dataArr[3] + "-" + dataArr[4]);
                         System.out.println("Inside Publisher "+ dataArr[3] + "-" + dataArr[4]);
                         lostData = TopicDAO.getLostData();
-                        publishData(topicswiseSubs, dataArr[3], dataArr[3] + "-" + dataArr[4] + "~~~~" + dataArr[5] + "~~~~" + dataArr[6], (ArrayList<String>) lostData);
+                        keyMap = TopicDAO.getKeyMap();
+
+//                        System.out.println("KeyMap, :" + keyMap);
+//                        System.out.println("DataArr[6]: " + dataArr[6]);
+//                        System.out.println("IP: "+ socket.getInetAddress().getHostAddress());
+//                        System.out.println("map lookup:"+keyMap.get(socket.getInetAddress().getHostAddress()));
+                        // now we compare the publicKey stored in keyMap with the one appended to the msg
+                        if (dataArr[6].equals(keyMap.get(socket.getInetAddress().getHostAddress())))
+                            publishData(topicswiseSubs, dataArr[3], dataArr[3] + "-" + dataArr[4] + "~~~~" + dataArr[5] + "~~~~" + dataArr[6], (ArrayList<String>) lostData);
+                        else
+                            System.out.println("Invalid Public Key. You have been rejected.");
 
                         dataOutputStream.writeUTF("40");
                         dataOutputStream.flush();
