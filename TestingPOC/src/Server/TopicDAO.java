@@ -19,6 +19,7 @@ public class TopicDAO {
     private static HashSet<String> allUpList = new HashSet<>();
     private static List<String> lostData = new ArrayList<>();
     private static ArrayList<String> thisBacklog = new ArrayList<>();
+    private static HashMap<String, String> keyMap = new HashMap();
 //    static {
 //        DBConnectionFactory.setLogger(logger);
 //    }
@@ -101,6 +102,14 @@ public class TopicDAO {
 
         TopicDAO.backlog = backlog;
         return DBConnectionFactory.setBacklog(backlog);
+    }
+
+    public static HashMap<String, String> getKeyMap() {
+        return keyMap;
+    }
+
+    public static void setKeyMap(HashMap<String, String> keyMap) {
+        keyMap = keyMap;
     }
 
     public static HashSet<String> getAllUpList() {
