@@ -139,6 +139,10 @@ public class Client{
                                         // System.out.println("signature: " + signature);
 //                                        System.out.println("publicKey: " + publicKey);
 
+                                        // now we will be testing using incorrect public Keys:
+//                                        publishPacket += "#" + signature + "#" + publicKey + "_random_data";
+                                        // now we will be testing using incorrect signatures:
+//                                        publishPacket += "#" + signature.substring(0, signature.length()-12) + "randomData" + "#" + publicKey;
                                         publishPacket += "#" + signature + "#" + publicKey;
                                         // publishPacket += "#" + signature + "#" + socket.getInetAddress().getLocalAddress();
 
@@ -157,6 +161,8 @@ public class Client{
                                             System.out.println(pubAck[1]);
                                         } else if (pubAck[0].equalsIgnoreCase("44")) {
                                             System.out.println("Added the Topic in the Topic Pool; But data was not published being a new topic; Republish the dat using Option 2");
+                                        }else if(pubAck[0].equalsIgnoreCase("43")){
+                                            System.out.println("Invalid Public Key. Your message has been rejected.");
                                         }
 
 
