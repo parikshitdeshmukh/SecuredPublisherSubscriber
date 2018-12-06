@@ -210,13 +210,18 @@ public class RequestHandler extends Thread{
 //                        System.out.println("map lookup:"+keyMap.get(socket.getInetAddress().getHostAddress()));
                         // now we compare the publicKey stored in keyMap with the one appended to the msg
                         if (dataArr[6].equals(keyMap.get(socket.getInetAddress().getHostAddress())))
+                        {
                             publishData(topicswiseSubs, dataArr[3], dataArr[3] + "-" + dataArr[4] + "~~~~" + dataArr[5] + "~~~~" + dataArr[6], (ArrayList<String>) lostData);
+                            dataOutputStream.writeUTF("40");
+                            dataOutputStream.flush();
+                        }
+
                         else
+                        {
                             System.out.println("Invalid Public Key. You have been rejected.");
-
-                        dataOutputStream.writeUTF("40");
-                        dataOutputStream.flush();
-
+                            dataOutputStream.writeUTF("43");
+                            dataOutputStream.flush();
+                        }
 
                     } else if (dataArr[0].equalsIgnoreCase("30")) {
                         topicList.add(dataArr[3]);
