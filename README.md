@@ -11,6 +11,7 @@ speed and takes care of heavy operations like:
   * Handling node failure
   * Persisting snapshot of subscribers
   * 100% message delivery on large scale
+  * Handling, verifying and storing public keys of clients
 
 * Publishers and Subscribers have no knowledge of each other and are loosely
 coupled.
