@@ -19,3 +19,15 @@ coupled.
 
 
 
+### Performance Metrics
+
+
+| Tables        | Are           |
+| ------------- |:-------------:|
+| Functional testing     | 100% working |
+| Message delivery small scale network | 100%      |
+| Message delivery Large scale network | 100%      |
+| Average Latency | 143.28 ms     |
+| Worse case latency | 490 ms |
+| Fault tolerant/ Node failure | YES |
+
