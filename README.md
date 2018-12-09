@@ -22,7 +22,7 @@ coupled.
 ### Performance Metrics
 
 
-| Tables        | Are           |
+| Criteria        | Outcome           |
 | ------------- |:-------------:|
 | Functional testing     | 100% working |
 | Message delivery small scale network | 100%      |
