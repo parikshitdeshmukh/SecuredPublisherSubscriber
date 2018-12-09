@@ -17,9 +17,10 @@ public class TopicDAO {
     private static HashMap<String, List<String>> IP_TopicMap = new HashMap<>();
     private static HashMap<String, ArrayList<String>> backlog = new HashMap<>();
     private static HashSet<String> allUpList = new HashSet<>();
-    private static List<String> lostData = new ArrayList<>();
+    private static  HashMap<String, String> IPWiseLostData = new HashMap<>();
     private static ArrayList<String> thisBacklog = new ArrayList<>();
     private static HashMap<String, String> keyMap = new HashMap();
+
 //    static {
 //        DBConnectionFactory.setLogger(logger);
 //    }
@@ -51,6 +52,10 @@ public class TopicDAO {
 
     public static void setThisBacklog(ArrayList<String> thisBacklog) {
         TopicDAO.thisBacklog = thisBacklog;
+    }
+
+    public static boolean connectToDB() {
+        return DBConnectionFactory.pingDB();
     }
 
     public Socket getSocket() {
@@ -104,14 +109,6 @@ public class TopicDAO {
         return DBConnectionFactory.setBacklog(backlog);
     }
 
-    public static HashMap<String, String> getKeyMap() {
-        return keyMap;
-    }
-
-    public static void setKeyMap(HashMap<String, String> keyMap) {
-        keyMap = keyMap;
-    }
-
     public static HashSet<String> getAllUpList() {
         return allUpList;
     }
@@ -121,11 +118,19 @@ public class TopicDAO {
     }
 
 
-    public static List<String> getLostData() {
-        return lostData;
+    public static HashMap<String, String> getIPWiseLostData() {
+        return IPWiseLostData;
     }
 
-    public static void setLostData(List<String> lostData) {
-        TopicDAO.lostData = lostData;
+    public static void setIPWiseLostData(HashMap<String, String> IPWiseLostdata) {
+        TopicDAO.IPWiseLostData = IPWiseLostdata;
+    }
+
+    public static HashMap<String, String> getKeyMap() {
+        return keyMap;
+    }
+
+    public static void setKeyMap(HashMap<String, String> keyMap) {
+        keyMap = keyMap;
     }
 }

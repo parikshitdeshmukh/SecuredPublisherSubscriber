@@ -1,0 +1,14 @@
+2018-12-04 19:29:38,454 Req Handler Started
+2018-12-04 19:29:38,455 Inside the server
+2018-12-04 19:29:39,417 []
+2018-12-04 19:29:39,417 Inside the server
+2018-12-04 19:29:40,420 Inside server Topic List
+2018-12-04 19:29:40,421 TopicsList as a String to be sent back: temp,
+2018-12-04 19:29:40,421 Inside the server
+2018-12-04 19:29:42,194 [127.0.0.1]
+2018-12-04 19:29:42,194 127.0.0.1
+2018-12-04 19:29:42,194 127.0.0.1
+2018-12-04 19:29:42,195 {temp=[Socket[addr=/127.0.0.1,port=58816,localport=6000]]}
+2018-12-04 19:29:42,195 Inside the server
+2018-12-04 19:29:50,054 Inside Publisher temp-oooo
+2018-12-04 19:29:50,054 Inside the server

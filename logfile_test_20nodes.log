@@ -1,0 +1,112 @@
+2018-12-06 23:33:28,260 Latency for TestTopic1-1: 10.0
+2018-12-06 23:33:28,258 Latency for TestTopic1-1: 7.0
+2018-12-06 23:33:28,300 Latency for TestTopic1-1: 24.0
+2018-12-06 23:33:28,303 Latency for TestTopic2-1: 27.0
+2018-12-06 23:33:28,260 Latency for TestTopic1-1: 9.0
+2018-12-06 23:33:28,303 Latency for TestTopic1-1: 27.0
+2018-12-06 23:33:28,306 Latency for TestTopic2-1: 30.0
+2018-12-06 23:33:28,257 Latency for TestTopic1-1: 7.0
+2018-12-06 23:33:28,309 Latency for TestTopic1-1: 33.0
+2018-12-06 23:33:28,311 Latency for TestTopic2-1: 35.0
+2018-12-06 23:33:28,260 Latency for TestTopic1-1: 10.0
+2018-12-06 23:33:28,307 Latency for TestTopic1-1: 31.0
+2018-12-06 23:33:28,309 Latency for TestTopic2-1: 33.0
+2018-12-06 23:33:28,263 Latency for TestTopic1-1: 12.0
+2018-12-06 23:33:28,314 Latency for TestTopic1-1: 38.0
+2018-12-06 23:33:28,319 Latency for TestTopic2-1: 43.0
+2018-12-06 23:33:28,314 Latency for TestTopic1-1: 38.0
+2018-12-06 23:33:28,319 Latency for TestTopic2-1: 43.0
+2018-12-06 23:33:28,257 Latency for TestTopic1-1: 7.0
+2018-12-06 23:33:28,292 Latency for TestTopic1-1: 16.0
+2018-12-06 23:33:28,303 Latency for TestTopic2-1: 27.0
+2018-12-06 23:33:28,261 Latency for TestTopic1-1: 11.0
+2018-12-06 23:33:28,342 Latency for TestTopic1-1: 66.0
+2018-12-06 23:33:28,344 Latency for TestTopic2-1: 68.0
+2018-12-06 23:33:28,258 Latency for TestTopic1-1: 7.0
+2018-12-06 23:33:28,350 Latency for TestTopic1-1: 74.0
+2018-12-06 23:33:28,350 Latency for TestTopic3-1: 23.0
+2018-12-06 23:33:28,352 Latency for TestTopic2-1: 76.0
+2018-12-06 23:33:28,352 Latency for TestTopic3-1: 25.0
+2018-12-06 23:33:28,354 Latency for TestTopic3-1: 27.0
+2018-12-06 23:33:28,354 Latency for TestTopic3-1: 27.0
+2018-12-06 23:33:28,356 Latency for TestTopic3-1: 29.0
+2018-12-06 23:33:28,355 Latency for TestTopic3-1: 28.0
+2018-12-06 23:33:28,359 Latency for TestTopic3-1: 32.0
+2018-12-06 23:33:28,363 Latency for TestTopic3-1: 35.0
+2018-12-06 23:33:28,262 Latency for TestTopic1-1: 12.0
+2018-12-06 23:33:28,365 Latency for TestTopic4-1: 9.0
+2018-12-06 23:33:28,368 Latency for TestTopic4-1: 12.0
+2018-12-06 23:33:28,368 Latency for TestTopic4-1: 12.0
+2018-12-06 23:33:28,368 Latency for TestTopic1-1: 92.0
+2018-12-06 23:33:28,369 Latency for TestTopic4-1: 13.0
+2018-12-06 23:33:28,369 Latency for TestTopic4-1: 13.0
+2018-12-06 23:33:28,369 Latency for TestTopic4-1: 13.0
+2018-12-06 23:33:28,371 Latency for TestTopic3-1: 44.0
+2018-12-06 23:33:28,371 Latency for TestTopic2-1: 95.0
+2018-12-06 23:33:28,376 Latency for TestTopic4-1: 20.0
+2018-12-06 23:33:28,378 Latency for TestTopic4-1: 22.0
+2018-12-06 23:33:28,381 Latency for TestTopic3-1: 54.0
+2018-12-06 23:33:28,381 Latency for TestTopic4-1: 25.0
+2018-12-06 23:33:28,386 Latency for TestTopic4-1: 30.0
+2018-12-06 23:33:29,608 Subscriber: /10.142.0.13 -- All received!
+2018-12-06 23:33:29,608 Subscriber: /10.142.0.21 -- All received!
+2018-12-06 23:33:29,608 Subscriber: /10.142.0.5 -- All received!
+2018-12-06 23:33:29,608 Subscriber: /10.142.0.15 -- All received!
+2018-12-06 23:33:29,609 Subscriber: /10.142.0.17 -- All received!
+2018-12-06 23:33:29,609 Subscriber: /10.142.0.23 -- All received!
+2018-12-06 23:33:29,609 Subscriber: /10.142.0.7 -- All received!
+2018-12-06 23:33:29,609 Subscriber: /10.142.0.11 -- All received!
+2018-12-06 23:33:29,609 Subscriber: /10.142.0.9 -- All received!
+2018-12-06 23:33:29,611 Subscriber: /10.142.0.19 -- All received!
+
+10.0
+7.0
+24.0
+27.0
+9.0
+27.0
+30.0
+7.0
+33.0
+35.0
+10.0
+31.0
+33.0
+12.0
+38.0
+43.0
+38.0
+43.0
+7.0
+16.0
+27.0
+11.0
+66.0
+68.0
+7.0
+74.0
+23.0
+76.0
+25.0
+27.0
+27.0
+29.0
+28.0
+32.0
+35.0
+12.0
+9.0
+12.0
+12.0
+92.0
+13.0
+13.0
+13.0
+44.0
+95.0
+20.0
+22.0
+54.0
+25.0
+30.0
+Avg: 30.2

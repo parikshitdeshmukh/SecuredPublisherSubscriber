@@ -1,0 +1,6 @@
+2018-12-04 19:29:38,416 Inside Init
+2018-12-04 19:29:39,418 Subscribe
+2018-12-04 19:29:39,418 inside client listener
+2018-12-04 19:29:42,195 SubAck: Subscribed to Topics successfully
+2018-12-04 19:29:42,195 Subscribe
+2018-12-04 19:29:42,195 inside client listener

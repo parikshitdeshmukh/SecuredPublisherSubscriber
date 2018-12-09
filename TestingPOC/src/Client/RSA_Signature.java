@@ -78,11 +78,6 @@ public class RSA_Signature
         Signature sig = Signature.getInstance("SHA256withRSA");
         sig.initVerify(publicKey);
         sig.update(data.getBytes());
-        // System.out.println("Signature inside verify(): " + signature);
-        // System.out.println("Public Key inside veriffy: " + publicKey);
-        // System.out.println("data inside verify: " + data);
-        // System.out.println("Base64: " + Base64.getDecoder().decode(signature));
-        // System.out.println("getBytes(): " + signature.getBytes());
 
         return sig.verify(Base64.getDecoder().decode(signature));
     }

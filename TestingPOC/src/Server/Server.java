@@ -25,9 +25,9 @@ public class Server {
 						Socket socket = serverSocket.accept();
 //						socket.setReuseAddress(true);
 //						serverSocket.setReuseAddress(true);
-						System.out.println("Accepted a conn");
+						System.out.println("Accepted a conn with : "+ socket);
 						socketList.add(socket);
-						new  RequestHandler(socket).start();
+						new RequestHandler(socket).start();
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -52,5 +52,3 @@ public class Server {
 		}
 	}
 }
-
-

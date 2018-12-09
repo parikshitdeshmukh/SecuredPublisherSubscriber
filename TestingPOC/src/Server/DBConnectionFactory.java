@@ -2,7 +2,6 @@ package Server;
 
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,10 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Server.RequestHandler.logger;
+
 
 public class DBConnectionFactory {
-
-    static Logger logger = RequestHandler.logger;
 
 
     private static BasicDataSource ds = new BasicDataSource();
@@ -23,11 +22,16 @@ public class DBConnectionFactory {
     // TODO: fill this in
     // The instance connection name can be obtained from the instance overview page in Cloud Console
     // or by running "gcloud sql instances describe <instance> | grep connectionName".
-    static String instanceConnectionName = "secured-pub-sub-system:us-east1:pubsubsql";
+    static String instanceConnectionName = "pubsubmastersproject-224500:us-central1:myinstance";
+//    static String instanceConnectionName = "secured-pub-sub-system:us-east1:pubsubsql";
+
 
     // TODO: fill this in
     // The database from which to list tables.
-    static String databaseName = "pubsub";
+//    static String databaseName = "pubsub";
+    static String databaseName = "BrokerStorage";
+
+
 
     static String username = "root";
 
@@ -36,7 +40,8 @@ public class DBConnectionFactory {
     // (not recommended).
     static String password = "root";
 
-    static String jdbcUrl = String.format(
+
+     static String jdbcUrl = String.format(
             "jdbc:mysql://google/%s?cloudSqlInstance=%s"
                     + "&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false",
             databaseName,
@@ -59,26 +64,6 @@ public class DBConnectionFactory {
     private DBConnectionFactory() throws SQLException {
     }
 
-    // public void insertIP (String IPAddress, String publicKey){
-    //     Connection connection = DBConnectionFactory getConnection();
-    //     PreparedStatement query = connection.prepareStatement("INSERT INTO PKeys (IPAddress, publicKey) VALUES (?, ?)");
-    //     query.setString(1, IPAddress);
-    //     query.setString(2, publicKey);
-    //     query.executeQuery();
-    // }
-
-    // public String retriveKey (String IPAddress){
-    //     Connection connection = DBConnectionFactory getConnection();
-    //     PreparedStatement query = connection.prepareStatement("SELECT publicKey FROM PKeys WHERE IPAddress = ?");
-    //     query.setString(1, IPAddress);
-    //     ResultSet rs = query.executeQuery();
-    //     String publicKey = "";
-    //     while(rs.next()){
-    //         publicKey = rs.getString(1);
-    //     }
-    //     return publicKey;
-    // }
-
     public static ArrayList<String> getBacklog(String IP) throws SQLException {
 
         ArrayList<String> dataList = new ArrayList<>();
@@ -93,8 +78,8 @@ public class DBConnectionFactory {
             while (rs.next()) {
                 dataList.add(rs.getString(1));
 
-                logger.info("Backlog from  DB Factory: "+rs.getString(1));
-                System.out.println("At the DB Factory: "+rs.getString(1) );
+                logger.info("At DB Factory getting Backlog ");
+                System.out.println("At the DB Factory getting Backlog");
             }
         } finally {
             connection.close();
@@ -111,11 +96,12 @@ public class DBConnectionFactory {
 
         try {
             connection = DBConnectionFactory.getConnection();
+            logger.info("At the DB Factory Inserting the backlog");
             System.out.println("At the DB Factory Inserting the backlog");
 
 
 //            stmt = connection.prepareStatement("insert into Backlog(IPAdd, Data) values(?,?) on duplicate key update Data=?");
-            stmt = connection.prepareStatement("insert into Backlog(IPAdd, Data) values(?,?)");
+              stmt = connection.prepareStatement("insert into Backlog(IPAdd, Data) values(?,?)");
 
 
 //            System.out.println(map);
@@ -127,10 +113,10 @@ public class DBConnectionFactory {
                 }
             }
 
-            if (stmt.executeBatch().length>0){
-                System.out.println("At DB Factory, returned batch length > 0");
-                return true;
-            }
+             if (stmt.executeBatch().length>0){
+                 System.out.println("At DB Factory, returned batch length > 0");
+                 return true;
+             }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -185,6 +171,39 @@ public class DBConnectionFactory {
             }
         }
 
+    }
+
+    public static boolean pingDB() {
+        Connection connection= null;
+        PreparedStatement stmt=null;
+
+        try {
+            connection = DBConnectionFactory.getConnection();
+
+            stmt = connection.prepareStatement("select * from Backlog");
+            return stmt.execute();
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                } // nothing we can do
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                } // nothing we can do
+            }
+        }
+
+
+
+        return false;
     }
 //
 //    public static void setLogger(Logger logger) {

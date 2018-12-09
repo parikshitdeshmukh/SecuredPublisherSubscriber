@@ -1,14 +1,19 @@
-log4j.rootLogger=INFO, FILE
+log4j.rootLogger=INFO
 
-# Define the file appender
-log4j.appender.FILE=org.apache.log4j.FileAppender
+log4j.appender.debugLog=org.apache.log4j.FileAppender
+log4j.appender.debugLog.Append=false
+log4j.appender.debugLog.threshold=info
+log4j.appender.debugLog.File=logs/debug.log
+log4j.appender.debugLog.layout=org.apache.log4j.PatternLayout
+log4j.appender.debugLog.layout.conversionPattern=%d %m%n
 
-# Set the name of the file
-log4j.appender.FILE.File=clientLogs.txt
+log4j.appender.reportsLog=org.apache.log4j.net.SocketAppender
+log4j.appender.reportsLog.threshold=info
+log4j.appender.reportsLog.Port=4712
+log4j.appender.reportsLog.RemoteHost=localhost
+log4j.appender.reportsLog.ReconnectionDelay=10000
 
-# Set the append to false, overwrite
-log4j.appender.FILE.Append=false
+log4j.category.debugLogger=INFO, debugLog
 
-# Define the layout for file appender
-log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
-log4j.appender.FILE.layout.conversionPattern=%d %m%n
+log4j.category.reportsLogger=INFO, reportsLog
+
