@@ -261,7 +261,7 @@ public class Client{
         logger.info("Inside Init");
         String publicKey = "";
         try {
-            gk.createKeys(); // generate one set pf keys for each node
+            gk.createKeys(); // generate one set of keys for each node
             publicKey = gk.storePublicKey(gk.getPublicKey());
             subOutputStream.writeUTF("00#" + publicKey);
             subOutputStream.flush();
