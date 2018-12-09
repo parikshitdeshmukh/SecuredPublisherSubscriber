@@ -30,4 +30,4 @@ coupled.
 | Average Latency | 143.28 ms     |
 | Worse case latency | 490 ms |
 | Fault tolerant/ Node failure | YES |
-
+| Security | Message Integrity Preserved |
