@@ -1,7 +1,7 @@
 
 # **Secured Publisher-Subscriber System**
 
-### A PKI secured, Scalable and Fault tolerant Publisher Subscriber system. Implemented simplified MQTT from scratch using JAVA with multithreading. Tested teh scalability by deplying app on 100 Google Cloud VM instances
+#### A PKI secured, Scalable and Fault tolerant Publisher Subscriber system. Implemented simplified MQTT from scratch using JAVA with multithreading. Tested scalability by deplying app on 100 Google Cloud VM instances
 
 * It is an **asynchronous messaging model** where Subscribers can subscribe to
 their Topics of interest. Publishers can publish data for multiple topics; and,
